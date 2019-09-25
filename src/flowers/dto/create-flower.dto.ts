@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiModelProperty, ApiConsumes } from '@nestjs/swagger';
 
 export class CreateFlowerDto {
 
@@ -14,5 +14,9 @@ export class CreateFlowerDto {
     @IsNotEmpty()
     @ApiModelProperty()
     price: number;
+
+    @IsNotEmpty()
+    @ApiModelProperty()
+    flowerImage: string;
 
 }

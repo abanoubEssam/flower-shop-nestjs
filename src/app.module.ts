@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { FlowersModule } from './flowers/flowers.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -13,6 +14,11 @@ import { MongooseModule } from '@nestjs/mongoose';
           useUnifiedTopology: true,
         };
       },
+    }),
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: '/upload',
+      }),
     }),
   ],
   controllers: [],

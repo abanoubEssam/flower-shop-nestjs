@@ -5,14 +5,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Flower } from './flower.interface';
 import { CreateFlowerDto } from './dto/create-flower.dto';
 import { UpdateFlowerDto } from './dto/update-flower.dto';
+import * as omit from 'omit-empty';
 @Injectable()
 export class FlowersService {
 
     constructor(@InjectModel('Flower') private readonly flowerModel: Model<Flower>) { }
 
     async inserFlower(createFlowerDto: CreateFlowerDto): Promise<Flower> {
-        const createdFlower = new this.flowerModel(createFlowerDto);
-        return await createdFlower.save();
+        const createdFlower = await this.flowerModel.create(createFlowerDto);
+        console.log("TCL: FlowersService -> constructor -> createdFlower", createdFlower);
+        return  createdFlower;
     }
 
     async getAllFlowers(): Promise<Flower[]> {
@@ -27,13 +29,17 @@ export class FlowersService {
     }
 
     async updateFlowerById(flowerId: string, updateFlowerDto: UpdateFlowerDto): Promise<Flower> {
-        const afterUpdate = await this.flowerModel.findByIdAndUpdate({ _id: flowerId }, updateFlowerDto , {new: true});
-        return afterUpdate;
+        const incomingBody = omit(updateFlowerDto);
+        console.log("TCL: FlowersService -> constructor -> incomingBody", incomingBody);
+        const updateFlower = await this.flowerModel.findByIdAndUpdate({ _id: flowerId }, incomingBody, { new: true });
+        if (!updateFlower) {
+            throw new NotFoundException('this flower not exist');
+        }
+        return updateFlower;
     }
 
-    deleteFlower(flowerId: string) {
-        // const index = this.findFlower(flowerId)[1];
-        // this.flowers.splice(index, 1);
+    async deleteFlower(flowerId: string) {
+        await this.flowerModel.findByIdAndRemove({ _id: flowerId });
     }
 
 }
