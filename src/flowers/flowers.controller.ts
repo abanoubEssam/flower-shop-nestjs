@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
 import { FlowersService } from './flowers.service';
 import { ApiUseTags } from '@nestjs/swagger';
+import { CreateFlowerDto } from './dto/create-flower.dto';
+import { UpdateFlowerDto } from './dto/update-flower.dto';
 
 @ApiUseTags('flowers')
 @Controller('flowers')
@@ -9,12 +11,10 @@ export class FlowersController {
 
     @Post()
     addFlower(
-        @Body('title') flowerTitle: string,
-        @Body('description') flowerDesc: string,
-        @Body('price') flowerPrice: number,
+        @Body() createFlowerDto: CreateFlowerDto,
     ): any {
         console.log('controller here');
-        const flowerData = this.flowersService.inserFlower(flowerTitle, flowerDesc, flowerPrice);
+        const flowerData = this.flowersService.inserFlower(createFlowerDto);
         return flowerData;
     }
 
@@ -33,13 +33,11 @@ export class FlowersController {
 
     @Patch(':id')
     updateFlower(
+        @Body() updateFlowerDto: UpdateFlowerDto,
         @Param('id') flowerId: string,
-        @Body('title') title: string,
-        @Body('description') description: string,
-        @Body('price') price: number,
     ) {
-        this.flowersService.updateFlowerById(flowerId, title, description, price);
-        return null;
+        const updatedFlower =  this.flowersService.updateFlowerById(flowerId, updateFlowerDto);
+        return updatedFlower;
     }
 
     @Delete(':id')

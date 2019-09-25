@@ -1,56 +1,39 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Flowers } from './flowers.model';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Flower } from './flower.interface';
+import { CreateFlowerDto } from './dto/create-flower.dto';
+import { UpdateFlowerDto } from './dto/update-flower.dto';
 @Injectable()
 export class FlowersService {
-    private flowers: Flowers[] = [];
-    inserFlower(title: string, desc: string, price: number) {
-        const flowerId = new Date().toISOString();
-        const newFlower = new Flowers(flowerId, title, desc, price);
-        console.log('service here');
 
-        this.flowers.push(newFlower);
-        console.log("TCL: FlowersService -> inserFlower -> flowers", this.flowers);
-        return newFlower;
+    constructor(@InjectModel('Flower') private readonly flowerModel: Model<Flower>) { }
+
+    async inserFlower(createFlowerDto: CreateFlowerDto): Promise<Flower> {
+        const createdFlower = new this.flowerModel(createFlowerDto);
+        return await createdFlower.save();
     }
 
-    getAllFlowers() {
-        return this.flowers;
+    async getAllFlowers(): Promise<Flower[]> {
+        // return this.flowers;
+        return await this.flowerModel.find();
     }
 
-    getFlowerById(flowerId: string) {
-        const flower = this.flowers.find((flow) => flow.id === flowerId);
-        if (!flower) {
-            throw new NotFoundException("Coud't found flower");
-        }
-        return { ...flower };
+    async getFlowerById(flowerId: string): Promise<Flower> {
+        const flower = await this.flowerModel.findById(flowerId);
+        console.log("TCL: FlowersService -> constructor -> flower", flower);
+        return flower;
     }
 
-    async updateFlowerById(flowerId: string, title: string, desc: string, price: number) {
-        const [flower, index] = this.findFlower(flowerId);
-        const updateFlower = { ...flower };
-        if (title) {
-            updateFlower.title = title;
-        }
-        if (desc) {
-            updateFlower.desc = desc;
-        }
-        if (price) {
-            updateFlower.price = price;
-        }
-        this.flowers[index] = updateFlower;
+    async updateFlowerById(flowerId: string, updateFlowerDto: UpdateFlowerDto): Promise<Flower> {
+        const afterUpdate = await this.flowerModel.findByIdAndUpdate({ _id: flowerId }, updateFlowerDto , {new: true});
+        return afterUpdate;
     }
 
     deleteFlower(flowerId: string) {
-        const index = this.findFlower(flowerId)[1];
-        this.flowers.splice(index, 1);
+        // const index = this.findFlower(flowerId)[1];
+        // this.flowers.splice(index, 1);
     }
 
-    private findFlower(id: string): [Flowers, number] {
-        const flowerIndex = this.flowers.findIndex((flow) => flow.id === id);
-        const flower = this.flowers[flowerIndex];
-        if (!flower) {
-            throw new NotFoundException("Coud't found flower");
-        }
-        return [flower, flowerIndex];
-    }
 }
