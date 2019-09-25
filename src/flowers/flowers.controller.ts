@@ -1,19 +1,20 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { FlowersService } from './flowers.service';
-import { ApiUseTags, ApiConsumes, ApiImplicitFile } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiImplicitFile, ApiUseTags } from '@nestjs/swagger';
 import { CreateFlowerDto } from './dto/create-flower.dto';
 import { UpdateFlowerDto } from './dto/update-flower.dto';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-
+import { FlowersService } from './flowers.service';
+import { upload } from '../multer.middleware';
 @ApiUseTags('flowers')
 @Controller('flowers')
 export class FlowersController {
     constructor(private readonly flowersService: FlowersService) { }
 
-    @Post('upload')
-    @UseInterceptors(FileInterceptor('flowerImage'))
+    @Post()
+    @UseInterceptors(FileInterceptor('flowerImage', upload,
+    ))
     @ApiConsumes('multipart/form-data')
-    @ApiImplicitFile({ name: 'flowerImage'})
+    @ApiImplicitFile({ name: 'flowerImage' })
     addFlower(
         @UploadedFile() file,
         @Body() createFlowerDto: CreateFlowerDto,
@@ -42,7 +43,7 @@ export class FlowersController {
         @Body() updateFlowerDto: UpdateFlowerDto,
         @Param('id') flowerId: string,
     ) {
-        const updatedFlower =  this.flowersService.updateFlowerById(flowerId, updateFlowerDto);
+        const updatedFlower = this.flowersService.updateFlowerById(flowerId, updateFlowerDto);
         return updatedFlower;
     }
 

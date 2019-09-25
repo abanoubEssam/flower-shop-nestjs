@@ -14,5 +14,6 @@ export const FlowerSchema = new mongoose.Schema({
     },
     flowerImage: {
         type: String,
+        required: true,
     },
 });

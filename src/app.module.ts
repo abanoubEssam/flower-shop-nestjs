@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { FlowersModule } from './flowers/flowers.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { MulterModule } from '@nestjs/platform-express';
     }),
     MulterModule.registerAsync({
       useFactory: () => ({
-        dest: '/upload',
+        storage: './upload',
       }),
     }),
   ],
