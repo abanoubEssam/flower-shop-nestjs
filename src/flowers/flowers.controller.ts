@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiImplicitFile, ApiUseTags } from '@nestjs/swagger';
 import { CreateFlowerDto } from './dto/create-flower.dto';
@@ -11,17 +11,28 @@ export class FlowersController {
     constructor(private readonly flowersService: FlowersService) { }
 
     @Post()
-    @UseInterceptors(FileInterceptor('flowerImage', upload,
-    ))
+    @UseInterceptors(
+        FileInterceptor(
+            'flowerImage',
+            upload,
+        ),
+    )
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'flowerImage' })
     addFlower(
         @UploadedFile() file,
         @Body() createFlowerDto: CreateFlowerDto,
     ): any {
+        console.log("TCL: FlowersController -> constructor -> createFlowerDto", createFlowerDto);
         console.log(file);
+        if (!file) {
+            throw new BadRequestException('Please Insert Image');
+        }
         console.log('controller here');
-        const flowerData = this.flowersService.inserFlower(createFlowerDto);
+        const flowerData = this.flowersService.inserFlower({
+            ...createFlowerDto,
+            flowerImage: `http://localhost:3000/${file.path}`,
+        });
         return flowerData;
     }
 
@@ -39,12 +50,35 @@ export class FlowersController {
     }
 
     @Patch(':id')
+    @UseInterceptors(
+        FileInterceptor(
+            'flowerImage',
+            upload,
+        ),
+    )
+    @ApiConsumes('multipart/form-data')
+    @ApiImplicitFile({ name: 'flowerImage' })
     updateFlower(
+        @UploadedFile() file,
         @Body() updateFlowerDto: UpdateFlowerDto,
         @Param('id') flowerId: string,
     ) {
-        const updatedFlower = this.flowersService.updateFlowerById(flowerId, updateFlowerDto);
+        let updatedFlower: any;
+        if (file) {
+            updatedFlower = this.flowersService.updateFlowerById(
+                flowerId,
+                {
+                    ...updateFlowerDto,
+                    flowerImage: `http://localhost:3000/${file.path}`,
+                },
+            );
+        }
+        if (!file) {
+            updatedFlower = this.flowersService.updateFlowerById(flowerId, updateFlowerDto);
+
+        }
         return updatedFlower;
+
     }
 
     @Delete(':id')

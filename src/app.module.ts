@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common';
 import { FlowersModule } from './flowers/flowers.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-
+// import { ServeStaticModule } from '@nestjs/serve-static';
+// import { join } from 'path';
+import * as autoIncrement from 'mongoose-auto-increment';
+import * as mongoose from 'mongoose';
 @Module({
   imports: [
     FlowersModule,
     MongooseModule.forRootAsync({
-      useFactory: () => {
+      useFactory:  () => {
         return {
           uri: 'mongodb://localhost/flowers-with-nest',
           useNewUrlParser: true,
@@ -19,9 +20,12 @@ import { extname } from 'path';
     }),
     MulterModule.registerAsync({
       useFactory: () => ({
-        storage: './upload',
+        dest: '/upload',
       }),
     }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'uploads'),
+    // }),
   ],
   controllers: [],
   providers: [],

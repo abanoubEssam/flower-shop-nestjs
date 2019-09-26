@@ -1,15 +1,33 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsEmpty } from 'class-validator';
 
 export class UpdateFlowerDto {
 
-    @ApiModelProperty()
+    @ApiModelProperty(
+        {
+            required: false,
+        },
+    )
     title: string;
 
-    @ApiModelProperty()
+    @ApiModelProperty(
+        {
+            required: false,
+        },
+    )
     description: string;
 
-    @ApiModelProperty()
+    @ApiModelProperty(
+        {
+            required: false,
+        },
+    )
     price: number;
 
+    @ApiModelProperty(
+        {
+            required: false,
+        },
+    )
+    flowerImage: string;
 }
