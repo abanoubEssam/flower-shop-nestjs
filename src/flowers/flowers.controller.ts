@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, BadRequestException, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiImplicitFile, ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateFlowerDto } from './dto/create-flower.dto';
 import { UpdateFlowerDto } from './dto/update-flower.dto';
 import { FlowersService } from './flowers.service';
 import { upload } from '../multer.middleware';
+import { RolesGuard } from '../utils/Guard/roles.guard';
 @ApiBearerAuth()
 @ApiUseTags('flowers')
 @Controller('flowers')
@@ -15,7 +16,7 @@ export class FlowersController {
     @UseInterceptors(
         FileInterceptor(
             'flowerImage',
-            upload,
+            // upload,
         ),
     )
     @ApiConsumes('multipart/form-data')

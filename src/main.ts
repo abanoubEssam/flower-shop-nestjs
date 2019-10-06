@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { swaggerD } from './swagger';
+import { swaggerD } from './utils/swagger';
 import * as express from 'express';
 import * as path from 'path';
 import { ValidationPipe } from '@nestjs/common';
