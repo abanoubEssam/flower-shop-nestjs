@@ -1,39 +1,37 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
-import { ApiUseTags, ApiConsumes, ApiImplicitFile } from '@nestjs/swagger';
-import { UserService } from './user.service';
+import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiImplicitFile, ApiUseTags } from '@nestjs/swagger';
+import { HandleImgsInterceptor, UploadField } from '../multer.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { upload } from '../multer.middleware';
-
+import { User } from './user.interface';
+import { UserService } from './user.service';
 @ApiUseTags('user')
 @Controller('user')
 export class UserController {
+
+    static getImgsFields = (options = { isUpdate: false }): UploadField[] => [
+        { name: 'userImage', maxCount: 1, optional: options.isUpdate, resizeOptions: { thumbnail: true } },
+    ]
+
     constructor(private readonly userService: UserService) { }
 
     @Post()
     @UseInterceptors(
-        FileInterceptor(
-            'userImage',
-            // upload,
+        FileFieldsInterceptor(
+            UserController.getImgsFields(),
         ),
+        HandleImgsInterceptor(UserController.getImgsFields()),
     )
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'userImage' })
-    postFlower(
+    async postFlower(
         @Body() createUserDto: CreateUserDto,
-        @UploadedFile() file,
-    ): any {
-        console.log(file);
-        if (!file) {
-            throw new BadRequestException('Please Insert Image');
-        }
-        console.log('controller here');
-        const userData = this.userService.postUser(
-            {
-                ...createUserDto,
-                userImage: `http://localhost:3000/${file.path}`,
-            });
-        return userData;
+        // @UploadedFile() file,
+    ): Promise<User> {
+        const userData = this.userService.postUser(createUserDto);
+        const resData = await userData;
+        console.log("TCL: UserController -> constructor -> userData", resData);
+        return resData;
     }
 
 }

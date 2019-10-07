@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, Req } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiImplicitFile, ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiImplicitFile, ApiUseTags } from '@nestjs/swagger';
+import { upload } from '../multer.middleware';
 import { CreateFlowerDto } from './dto/create-flower.dto';
 import { UpdateFlowerDto } from './dto/update-flower.dto';
+import { Flower } from './flower.interface';
 import { FlowersService } from './flowers.service';
-import { upload } from '../multer.middleware';
+import { Request } from 'express';
 @ApiBearerAuth()
 @ApiUseTags('flowers')
 @Controller('flowers')
@@ -20,11 +22,10 @@ export class FlowersController {
     )
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'flowerImage' })
-    addFlower(
+    async addFlower(
         @Body() createFlowerDto: CreateFlowerDto,
         @UploadedFile() file,
-    ): any {
-        console.log("TCL: FlowersController -> constructor -> createFlowerDto", createFlowerDto);
+    ): Promise<Flower> {
         console.log(file);
         if (!file) {
             throw new BadRequestException('Please Insert Image');
@@ -38,8 +39,9 @@ export class FlowersController {
     }
 
     @Get()
-    getAllFlowers() {
+    getAllFlowers(@Req() req: Request) {
         const flowersData = this.flowersService.getAllFlowers();
+        console.log(req.headers);
         return flowersData;
     }
 

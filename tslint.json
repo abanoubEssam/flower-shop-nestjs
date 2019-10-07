@@ -6,6 +6,12 @@
   },
   "rules": {
     "no-console":false,
+    "indent":false,
+    "no-empty":false,
+    "curly":false,
+    "interface-over-type-literal":false,
+    "prefer-const":false,
+    "one-variable-per-declaration":false,
     "quotemark": [false, "single"],
     "member-access": [false],
     "ordered-imports": [false],

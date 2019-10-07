@@ -19,8 +19,12 @@ export const UserSchema = new mongoose.Schema(
             required: true,
         },
         userImage: {
-            type: String,
-            required: true,
+            original: {
+                type: String,
+            },
+            thumbnail: {
+                type: String,
+            },
         },
     },
     {

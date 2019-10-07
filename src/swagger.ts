@@ -5,7 +5,7 @@ export function swaggerD(app) {
         .setTitle('Flowers Shop')
         .setDescription('Flowers Shop Nest API')
         .setVersion('1.0')
-        .addBearerAuth()
+        .addBearerAuth('Authorization', 'header', 'apiKey')
         .build();
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('/api-docs', app, document);

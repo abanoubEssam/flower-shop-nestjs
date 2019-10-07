@@ -15,6 +15,7 @@ import { UserModule } from './user/user.module';
           uri: 'mongodb://localhost/flowers-with-nest',
           useFindAndModify: false,
           useNewUrlParser: true,
+          useUnifiedTopology: true,
           useCreateIndex: true,
         };
       },

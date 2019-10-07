@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './user.schema';
 import { MulterModule } from '@nestjs/platform-express';
-// import * as multer from 'multer';
+import * as multer from 'multer';
 import { diskStorage } from 'multer';
 
 @Module({
@@ -12,13 +12,7 @@ import { diskStorage } from 'multer';
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MulterModule.registerAsync({
       useFactory: () => ({
-        storage: diskStorage({
-          destination: './uploads'
-          , filename: (req, file, cb) => {
-            cb(null, file.originalname);
-          },
-        }),
-        // storage: multer.memoryStorage(),
+        storage: multer.memoryStorage(),
 
       }),
     }),

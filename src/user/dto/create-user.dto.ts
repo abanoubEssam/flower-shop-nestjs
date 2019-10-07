@@ -1,6 +1,10 @@
 import { IsNotEmpty, IsEmail } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger';
 
+interface ResizedImage {
+    original: string;
+    thumbnail: string;
+}
 export class CreateUserDto {
 
     @IsNotEmpty()
@@ -22,8 +26,8 @@ export class CreateUserDto {
     @ApiModelProperty()
     password: string;
 
-    // @IsNotEmpty()
+    @IsNotEmpty()
     @ApiModelProperty()
-    userImage: string;
+    userImage: ResizedImage;
 
 }
