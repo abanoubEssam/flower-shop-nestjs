@@ -1,42 +1,35 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, Req } from '@nestjs/common';
 
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiImplicitFile, ApiUseTags } from '@nestjs/swagger';
-import { upload } from '../multer.middleware';
 import { CreateFlowerDto } from './dto/create-flower.dto';
 import { UpdateFlowerDto } from './dto/update-flower.dto';
 import { Flower } from './flower.interface';
 import { FlowersService } from './flowers.service';
-import { RolesGuard } from '../utils/Guard/roles.guard';
-
+import { Request } from 'express';
+import { HandleImgsInterceptor, UploadField } from '../multer.interceptor';
 @ApiBearerAuth()
 @ApiUseTags('flowers')
 @Controller('flowers')
 export class FlowersController {
     constructor(private readonly flowersService: FlowersService) { }
-
+    static getImgsFields = (options = { isUpdate: false }): UploadField[] => [
+        { name: 'flowerImage', maxCount: 1, optional: options.isUpdate, resizeOptions: { thumbnail: true } },
+    ]
     @Post()
     @UseInterceptors(
-        FileInterceptor(
-            'flowerImage',
-            // upload,
+        FileFieldsInterceptor(
+            FlowersController.getImgsFields(),
         ),
+        HandleImgsInterceptor(FlowersController.getImgsFields()),
     )
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'flowerImage' })
     async addFlower(
         @Body() createFlowerDto: CreateFlowerDto,
-        @UploadedFile() file,
     ): Promise<Flower> {
-        console.log(file);
-        if (!file) {
-            throw new BadRequestException('Please Insert Image');
-        }
         console.log('controller here');
-        const flowerData = this.flowersService.inserFlower({
-            ...createFlowerDto,
-            flowerImage: `http://localhost:3000/${file.path}`,
-        });
+        const flowerData = this.flowersService.inserFlower(createFlowerDto);
         return flowerData;
     }
 
@@ -56,10 +49,10 @@ export class FlowersController {
 
     @Patch(':id')
     @UseInterceptors(
-        FileInterceptor(
-            'flowerImage',
-            upload,
+        FileFieldsInterceptor(
+            FlowersController.getImgsFields(),
         ),
+        HandleImgsInterceptor(FlowersController.getImgsFields()),
     )
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'flowerImage' })

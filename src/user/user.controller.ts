@@ -5,6 +5,7 @@ import { HandleImgsInterceptor, UploadField } from '../multer.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.interface';
 import { UserService } from './user.service';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 @ApiUseTags('user')
 @Controller('user')
 export class UserController {
@@ -17,6 +18,7 @@ export class UserController {
 
     @Post()
     @UseInterceptors(
+        LoggingInterceptor,
         FileFieldsInterceptor(
             UserController.getImgsFields(),
         ),

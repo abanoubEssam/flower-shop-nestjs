@@ -1,21 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UserController } from './user.controller';
 import { UserSchema } from './user.schema';
-import { MulterModule } from '@nestjs/platform-express';
-import * as multer from 'multer';
-import { diskStorage } from 'multer';
+import { UserService } from './user.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-    MulterModule.registerAsync({
-      useFactory: () => ({
-        storage: multer.memoryStorage(),
-
-      }),
-    }),
   ],
   controllers: [UserController],
   providers: [UserService],

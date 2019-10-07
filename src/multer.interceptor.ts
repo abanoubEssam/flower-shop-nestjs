@@ -116,7 +116,11 @@ async function checkValidImgUrl(req: any, field: UploadField) {
 
 	for (let imgUrl of fieldDataInBody) {
 		if (!isImgUrl(imgUrl) || !await isExistedImg(imgUrl, uploadsDirPath))
-			throw new UnprocessableEntityException();
+			throw new UnprocessableEntityException({
+				message: "please insert image",
+				error: "Unprocessable Entity",
+				code: "422",
+			});
 	}
 }
 
@@ -146,7 +150,11 @@ async function validateAndNormalizeImg(req: any, field: UploadField, options = {
 
 	// check if all required fields are existed
 	if (!field.optional && (!req.files[field.name] || (field.isAllowedUrl && !req.body[field.name])))
-		throw new UnprocessableEntityException();
+		throw new UnprocessableEntityException({
+			message: "please insert image",
+			error: "Unprocessable Entity",
+			code: "422",
+		});
 
 	// check if it's allowed to be an img url
 	if (!field.isAllowedUrl && req.body[field.name])
