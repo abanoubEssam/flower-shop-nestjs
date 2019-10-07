@@ -18,6 +18,8 @@
     "max-line-length": [true, 150],
     "member-ordering": [false],
     "interface-name": [false],
+    "one-variable-per-declaration":false,
+    "class-name":false,
     "arrow-parens": false,
     "object-literal-sort-keys": false
   },
