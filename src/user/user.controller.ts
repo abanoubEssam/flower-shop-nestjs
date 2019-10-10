@@ -30,10 +30,7 @@ export class UserController {
         @Body() createUserDto: CreateUserDto,
         // @UploadedFile() file,
     ): Promise<User> {
-        const userData = this.userService.postUser(createUserDto);
-        const resData = await userData;
-        console.log("TCL: UserController -> constructor -> userData", resData);
-        return resData;
+        return await this.userService.postUser(createUserDto);
     }
 
 }

@@ -12,7 +12,6 @@ export class FlowersService {
 
     async inserFlower(createFlowerDto: CreateFlowerDto): Promise<Flower> {
         const createdFlower = await this.flowerModel.create(createFlowerDto);
-        console.log("TCL: FlowersService -> constructor -> createdFlower", createdFlower);
         return createdFlower;
     }
 
@@ -35,8 +34,6 @@ export class FlowersService {
             throw new NotFoundException('Flower Not Found');
         }
         const incomingBody = omit(updateFlowerDto);
-        console.log("TCL: FlowersService -> constructor -> incomingBody", incomingBody);
-        console.log("TCL: FlowersService -> constructor -> checkExist", checkExist);
         const updateFlower = await this.flowerModel.findByIdAndUpdate({ _id: flowerId }, incomingBody, { new: true });
         if (!updateFlower) {
             throw new NotFoundException('this flower not exist');
