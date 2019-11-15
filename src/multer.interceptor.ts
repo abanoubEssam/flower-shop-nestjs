@@ -55,10 +55,10 @@ export function HandleImgsInterceptor(uploadFields: UploadField[]): Type<NestInt
 	return mixin(MixinInterceptor) as Type<NestInterceptor>;
 }
 
-export type MulterField = {
-	name: string;
-	maxCount: number;
-};
+// export type MulterField = {
+// 	name: string;
+// 	maxCount: number;
+// };
 
 export type UploadField = MulterField & {
 	maxCount: number;

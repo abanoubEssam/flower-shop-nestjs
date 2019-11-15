@@ -28,6 +28,7 @@ export class FlowersController {
     async addFlower(
         @Body() createFlowerDto: CreateFlowerDto,
     ): Promise<Flower> {
+        console.log("TCL: FlowersController -> constructor -> createFlowerDto", createFlowerDto)
         console.log('controller here');
         const flowerData = this.flowersService.inserFlower(createFlowerDto);
         return flowerData;
